@@ -1,0 +1,42 @@
+
+const openai = new OpenAI({
+    apiKey: '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', // defaults to process.env["OPENAI_API_KEY"]
+  });
+const Chatbot = () => {
+    const [data, setData] = useState([]); // Fix the state declaration
+    const apiKey = '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'; // Fix apiKey variable
+    const apiUrl = 'https://api.openai.com/v1/engines/text-davinci-002/completions';
+    const [textInput, setTextInput] = useState('');
+
+    
+    const handleSend = async () => {
+        const prompt = textInput;
+        // You should replace 'S{apiKey}' with `apiKey` in the Authorization header
+        const response = await axios.post(apiUrl, {
+            prompt: prompt,
+            max_tokens: 1024,
+            temperature: 0.5,
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }
+        }).then(()=>{
+            console.log("response",response)
+        }).catch((err)=>{
+            console.log("err",err)
+        });
+       
+        // const text = response?.data.choices[0].text;
+        // setData([...data, { type: 'user', text: textInput }, { type: 'bot', text: text }]);
+        // setTextInput('');
+    }
+    const handleSend2 = async () => {
+        const chatCompletion = await openai.completions.create({
+            prompt:textInput,
+            model: 'gpt-3.5-turbo-instruct',
+          });
+
+          const text=chatCompletion.choices[0].message
+          console.log(text,chatCompletion)
+    }
